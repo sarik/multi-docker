@@ -2,6 +2,8 @@ version: '3'
 services:
   postgres:
     image: 'postgres:latest'
+    ports:
+      - '5431:5432'
   redis:
     image: 'redis:latest'
   nginx:
