@@ -6,18 +6,11 @@ services:
     image: 'redis:latest'
   nginx:
     restart: always
-    build:
-      dockerfile: Dockerfile.dev
-      context: ./nginx
+    image: stephengrider/multi-nginx
     ports:
-      - '3050:80'
+      - '3051:80'
   api:
-    build:
-      dockerfile: Dockerfile.dev
-      context: ./server
-    volumes:
-      - /app/node_modules
-      - ./server:/app
+    image: stephengrider/multi-server
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
@@ -26,20 +19,14 @@ services:
       - PGDATABASE=postgres
       - PGPASSWORD=postgres_password
       - PGPORT=5432
+    depends_on:
+    - postgres
   client:
-    build:
-      dockerfile: Dockerfile.dev
-      context: ./client
-    volumes:
-      - /app/node_modules
-      - ./client:/app
+    image: sarik123/client_new
   worker:
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-    build:
-      dockerfile: Dockerfile.dev
-      context: ./worker
-    volumes:
-      - /app/node_modules
-      - ./worker:/app
+    image: stephengrider/multi-worker
+    depends_on:
+    - redis
